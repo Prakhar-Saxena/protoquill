@@ -1,53 +1,56 @@
-// package io.getquill
+package io.getquill
 
-// import io.getquill.quoter.Dsl._
-// import io.getquill.quoter.Dsl.autoQuote
-// import io.getquill.parser._
+import io.getquill.quoter.Dsl._
+import io.getquill.quoter.Dsl.autoQuote
+import io.getquill.parser._
 
-// object ActionParserTest {
-//   def main(args: Array[String]):Unit = {
-//     println('\n'*10)
+object ActionParserTest {
+  def main(args: Array[String]):Unit = {
+    println('\n'*10)
 
-//     val ctx = new MirrorContext(MirrorSqlDialect, Literal)
-//     import ctx._
+    val ctx = new MirrorContext(MirrorSqlDialect, Literal)
+    import ctx._
 
-//     case class Person(name:String, age:Int)
+    case class Person(name:String, age:Int)
 
-//     val insertOutput = quote {
-//       query[Person].insert(_.name -> "John", _.age -> 21)
-//       //INSERT INTO Person (name,age) VALUES (?, ?)
-//     }
-//     println()
-//     ctx.run(insertOutput)
+    //INSERT AP01
 
-//     val updateOutput = quote {
-//       query[Person].filter(_.name=="Joe").update(_.name -> "John")
-//        //UPDATE Person SET name = ? WHERE name = ?
-//     }
-//     println()
-//     ctx.run(updateOutput)
+    inline def ap01_1 = quote {
+      query[Person].insert(Person("John",21))
+    }
+    assert(run(ap01_1).string=="INSERT INTO Person (name,age) VALUES ('John', 21)")
 
-//     inline def deleteOutput = quote {
-//       query[Person].filter(p => p.name == "Joe").delete
-//       //DELTE FROM Person WHERE name = 'Joe'
-//     }
-//     println()
-//     ctx.run(deleteOutput)
+    inline def ap01_2 = quote {
+      query[Person].insert(_.name -> "John", _.age -> 21)
+    }
+    assert(run(ap01_2).string=="INSERT INTO Person (name,age) VALUES ('John', 21)")
 
-//     // val queryReturningOutput = quote {
-//     //   query[Person].insert(_.name -> "John", _.age -> 21).returning(p => p.name)
-//     //   //INSERT INTO Person (name, age) VALUES ('Joe', 21) RETURNING name
-//     // }
-//     // ctx.run(queryReturningOutput)
 
-//     // val queryReturningGeneratedOutput = quote {
-//     //   query[Person].insert(_.name -> "John", _.age -> 21).returningGenerated(p => p.name)
-//     //   //INSERT INTO Person (id, name, age) VALUES (-1, 'Joe', 1) RETURNING id
-//     // }
-//     // ctx.run(queryReturningGeneratedOutput)
+    //UPDATE AP02
+
+    inline def ap02_1 = quote {
+      query[Person].update(_.name -> "Joe")
+    }
+    assert(run(ap02_1).string=="UPDATE Person SET name = 'Joe'")
+
+    inline def ap02_2 = quote {
+      query[Person].filter(_.name == "John").update(_.name -> "Joe")
+    }
+    assert(run(ap02_2).string=="UPDATE Person SET name = 'Joe' WHERE name = 'John'")
+
     
-//     //compileeeeeeeee
+    //DELETE AP03
+    
+    inline def ap03_1 = quote {
+      query[Person].delete
+    }
+    assert(run(ap03_1).string=="DELETE FROM Person")
 
-//     println('\n'*10)
-//   }
-// }
+    inline def ap03_2 = quote {
+      query[Person].filter(_.name == "John").delete
+    }
+    assert(run(ap03_2).string=="DELETE FROM Person WHERE name = 'John'")
+
+    println('\n'*10)
+  }
+}
