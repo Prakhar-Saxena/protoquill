@@ -24,14 +24,14 @@ object ActionParserTest {
     case class Person(name:String, age:Int)
 
     "INSERT AP01" - {
-      "AP01_1" - {
+      "AP01_1" in {
         inline def ap01_1 = quote {
           query[Person].insert(Person("John",21))
         }
         run(ap01_1).string mustEqual "INSERT INTO Person (name,age) VALUES ('John', 21)"
       }
 
-      "AP01_2" - {
+      "AP01_2" in {
         inline def ap01_2 = quote {
           query[Person].insert(_.name -> "John", _.age -> 21)
         }
@@ -41,14 +41,14 @@ object ActionParserTest {
     
 
     "UPDATE AP02" - {
-      "AP02_1" - {
+      "AP02_1" in {
         inline def ap02_1 = quote {
           query[Person].update(_.name -> "Joe")
         }
         run(ap02_1).string mustEqual "UPDATE Person SET name = 'Joe'"
       }
 
-      "AP02_2" - {
+      "AP02_2" in {
         inline def ap02_2 = quote {
           query[Person].filter(_.name == "John").update(_.name -> "Joe")
         }
@@ -57,14 +57,14 @@ object ActionParserTest {
     }
     
     "DELETE AP03" - {
-      "AP03_1" - {
+      "AP03_1" in {
         inline def ap03_1 = quote {
           query[Person].delete
         }
         run(ap03_1).string mustEqual "DELETE FROM Person"
       }
 
-      "AP03_2" - {
+      "AP03_2" in {
         inline def ap03_2 = quote {
           query[Person].filter(_.name == "John").delete
         }

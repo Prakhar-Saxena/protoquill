@@ -24,7 +24,7 @@ object CorrelatedSubqueryTest {
     case class Person(id: Int, firstName: String, lastName: String, companyId: Int)
     case class Address(id: Int, street: String, zip: Int, personId: Int)
 
-    "COMPLEX04_1" - {
+    "COMPLEX04_1" in {
       inline def complex04_1 = quote {
         query[Person]
           .filter(p => query[Address]
